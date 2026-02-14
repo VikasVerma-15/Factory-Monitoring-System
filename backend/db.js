@@ -7,8 +7,7 @@ const mongoose = require('mongoose');
 async function connectDB(uri) {
   const mongoUri =
     uri ||
-    process.env.MONGODB_URI ||
-    'mongodb+srv://vikasverma152001:vikas123@cluster0.gqslnz2.mongodb.net/factory_monitor?retryWrites=true&w=majority&appName=Cluster0';
+    process.env.MONGODB_URI
 
   try {
     // Check if already connected
