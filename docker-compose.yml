@@ -1,0 +1,56 @@
+version: '3.8'
+
+services:
+  mongo:
+    image: mongo:7
+    container_name: factory-monitor-mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - factory-network
+    restart: unless-stopped
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: factory-monitor-backend
+    ports:
+      - "5000:5000"
+    environment:
+      - PORT=5000
+      - MONGODB_URI=mongodb://mongo:27017/factory_monitor
+      - NODE_ENV=production
+    depends_on:
+      - mongo
+    networks:
+      - factory-network
+    restart: unless-stopped
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: factory-monitor-frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+    networks:
+      - factory-network
+    restart: unless-stopped
+    environment:
+      - REACT_APP_API_URL=http://backend:5000/api
+
+volumes:
+  mongo_data:
+
+networks:
+  factory-network:
+    driver: bridge
+
