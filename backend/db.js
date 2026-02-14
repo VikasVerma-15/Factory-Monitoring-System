@@ -5,9 +5,10 @@ const mongoose = require('mongoose');
  * Connects directly to MongoDB Atlas without caching
  */
 async function connectDB(uri) {
-  const mongoUri =
-    uri ||
-    process.env.MONGODB_URI;
+  const mongoUri = uri || process.env.MONGODB_URI;
+  if (!mongoUri) {
+    throw new Error('MONGODB_URI environment variable is required');
+  }
 
   try {
     // Check if already connected
